@@ -121,9 +121,9 @@ class LinearFunction_Robust(ch.function_node.FunctionNode):
                 # Loop over output dimension.
                 for i in range(k):
                     if self.nfactor:
-                        gb[i] = self.robustifier(x=(gy[:,i]*n))
+                        gb[i] = self.robustifier(x=(gy.array[:,i]*n))
                     else:
-                        gb[i] = self.robustifier(x=gy[:,i])
+                        gb[i] = self.robustifier(x=gy.array[:,i])
 
                 gb = ch.Variable(gb)
 
