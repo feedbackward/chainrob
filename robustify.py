@@ -13,21 +13,30 @@ import helpers as hlp
 
 def softmean(x, paras=None):
     '''
-    Catoni and Giulini (2017) key insights applied
-    to a one-dimensional setting, very handy.
+    Our simplification and modification of the
+    key ideas of Catoni and Giulini (2017) to
+    make for a readily computable robust mean.
     
-    Here "x" is assumed to be an ndarray with
-    no structure, just (k,) shape.
+    Here "x" is assumed to have shape (n,k), where
+    the rows (the first index) correspond to the
+    observations.
     '''
 
-    est_mean = np.mean(x)
-    est_var = max(np.var(x), 0.001)
-    est_sd = math.sqrt(est_var)
+    n, k = x.shape
+
+    if paras is None:
+        est_mean = np.mean(x, axis=0)
+        est_var = np.clip(a=np.var(x, axis=0), a_min=0.001, a_max=None)
+        est_sd = np.sqrt(est_var)
+    else:
+        est_mean = paras["mean"]
+        est_var = paras["var"]
+        est_sd = np.sqrt(est_var)
 
     # Treat data as z-scores, thus no need for "safe" bounds.
     Tbound = 1.0 
     vbound = Tbound
-    lam = math.sqrt(2*math.log(1/config.CONF_DELTA)/(x.size*vbound))
+    lam = math.sqrt(2*math.log(1/config.CONF_DELTA)/(n*vbound))
     beta = math.sqrt(
         2*Tbound*math.log(1/config.CONF_DELTA)/vbound
     )
@@ -36,6 +45,6 @@ def softmean(x, paras=None):
     xhat += est_mean
 
     return xhat
-
+    
 
 

@@ -56,15 +56,23 @@ def correction(m, sigma):
 def est_robust(x, lam, beta):
     '''
     New Catoni-type estimator.
-    Assumes that x is a vector of shape (n,).
+    Assumes that x is a vector of shape (n,k), where
+    rows correspond to distinct observations. The
+    parameters lam and beta are assumed to have 
+    shape (k,) or (), can be just scalars.
     '''
+
+    # Shape checks.
+    n,k = x.shape
+    if len(x.shape) < 2:
+        raise ValueError("Shapes are not as expected.")
 
     # Main computations have no issues with under/overflow.
     comps = x * (1 - (lam*x)**2/(2*beta)) - (lam**2)*(x**3)/6
     
     # Make sure things are numerically stable for corrections.
     # note: beta is safe as-is.
-    lam_safe = max(lam, config.LAM_MIN)
+    lam_safe = np.clip(a=lam, a_min=config.LAM_MIN, a_max=None)
 
     # Final computations based on safe values.
     corr = correction(
@@ -73,4 +81,4 @@ def est_robust(x, lam, beta):
                        config.SIGMA_MIN,
                        lam_safe*np.abs(x))/math.sqrt(beta)
     ) / lam_safe
-    return np.mean(comps) + np.mean(corr)
+    return np.mean(comps, axis=0) + np.mean(corr, axis=0)

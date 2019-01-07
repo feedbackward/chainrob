@@ -45,11 +45,10 @@ class LinearFunction_Robust(ch.function_node.FunctionNode):
         # Add a bias term, if relevant.
         if b is not None:
             y += b
+            self.retain_inputs((0,1,2))
+        else:
+            self.retain_inputs((0,1))
         
-        # Since backward() only depends on (x,W),
-        # we need only "retain" these two.
-        self.retain_inputs((0,1))
-
         # Return as a tuple, always.
         return (y,)
 
@@ -65,7 +64,10 @@ class LinearFunction_Robust(ch.function_node.FunctionNode):
         '''
         
         # Pick up the retained inputs.
-        x, W = self.get_retained_inputs()
+        if len(self.get_retained_inputs()) > 2:
+            x, W, b = self.get_retained_inputs()
+        else:
+            x, W = self.get_retained_inputs()
         
         # Get gradient of objective WRT unit *outputs*.
         gy = grad_outputs[0]
@@ -77,6 +79,8 @@ class LinearFunction_Robust(ch.function_node.FunctionNode):
         
         # Robustification is only relevant for W and b.
         out = []
+
+        # Now for the robustification routines as needed.
         if 0 in indices:
             gx = gy @ W
             out.append(ch.functions.cast(gx, x.dtype))
@@ -97,11 +101,10 @@ class LinearFunction_Robust(ch.function_node.FunctionNode):
                     gradsW = x.array * np.take(gy.array, [i], 1)
                     if self.nfactor:
                         gradsW *= n
+
+                    # Do without loop over input dimension.
+                    gW[i,:] = self.robustifier(x=gradsW)
                     
-                    # Loop over input dimension.
-                    for j in range(d):
-                        gW[i,j] = self.robustifier(x=gradsW[:,j])
-                        
                 # Finally, convert this gW to Variable form.
                 gW = ch.Variable(gW)
 
@@ -117,16 +120,15 @@ class LinearFunction_Robust(ch.function_node.FunctionNode):
                 # If batch has enough samples, can aggregate robustly.
                 gb = np.zeros((k,), dtype=W.dtype) # start as ndarray.
                 # note: use same type as W.
+
+                # Do without loop over outputs here.
+                if self.nfactor:
+                    gb = self.robustifier(x=gy.array*n).flatten()
+                else:
+                    gb = self.robustifier(x=gy.array).flatten()
                 
-                # Loop over output dimension.
-                for i in range(k):
-                    if self.nfactor:
-                        gb[i] = self.robustifier(x=(gy.array[:,i]*n))
-                    else:
-                        gb[i] = self.robustifier(x=gy.array[:,i])
-
                 gb = ch.Variable(gb)
-
+                    
             out.append(ch.functions.cast(gb, W.dtype))
 
             
