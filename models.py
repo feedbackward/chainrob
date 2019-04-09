@@ -79,7 +79,7 @@ class LinearFunction_Robust(ch.function_node.FunctionNode):
         
         # Robustification is only relevant for W and b.
         out = []
-
+        
         # Now for the robustification routines as needed.
         if 0 in indices:
             gx = gy @ W
@@ -107,7 +107,7 @@ class LinearFunction_Robust(ch.function_node.FunctionNode):
                     
                 # Finally, convert this gW to Variable form.
                 gW = ch.Variable(gW)
-
+            
             out.append(ch.functions.cast(gW, W.dtype))
         
         if 2 in indices:
@@ -116,7 +116,6 @@ class LinearFunction_Robust(ch.function_node.FunctionNode):
                 gb = ch.functions.sum(gy, axis=0)
                 
             else:
-
                 # If batch has enough samples, can aggregate robustly.
                 gb = np.zeros((k,), dtype=W.dtype) # start as ndarray.
                 # note: use same type as W.
@@ -162,7 +161,7 @@ class Linear_Robust(ch.Link):
                  nobias=False, init_W=None, init_b=None, init_delta=None):
 
         super(Linear_Robust, self).__init__()
-
+        
         self.robustifier = robustifier
         self.nfactor = nfactor
         
@@ -208,6 +207,63 @@ class Linear_Robust(ch.Link):
 
 
 ## Chain objects. ##
+
+class Chain_Class_H2_ReLU_Robust(ch.Chain):
+    '''
+    A simple architecture for classification.
+    Feedforward structure.
+    Hidden layers: 2
+    Hidden layer output activations: Rectified linear unit.
+    Final outputs are just "log probabilities", i.e.,
+    non-normalized scores; the number of final outputs
+    is assumed to be the number of classes.
+    '''
+
+    def __init__(self, out_l0, out_l1, out_l2,
+                 out_l3, robustifiers, nfactors,
+                 nobias=False, init_delta=config.INIT_UNIF_WIDTH):
+
+        super(Chain_Class_H2_ReLU_Robust, self).__init__()
+
+        with self.init_scope():
+
+            self.l1 = Linear_Robust(in_size=out_l0,
+                                    out_size=out_l1,
+                                    robustifier=robustifiers[0],
+                                    nfactor=nfactors[0],
+                                    init_W=None,
+                                    init_b=None,
+                                    init_delta=init_delta,
+                                    nobias=nobias)
+            self.l2 = Linear_Robust(in_size=out_l1,
+                                    out_size=out_l2,
+                                    robustifier=robustifiers[1],
+                                    nfactor=nfactors[1],
+                                    init_W=None,
+                                    init_b=None,
+                                    init_delta=init_delta,
+                                    nobias=nobias)
+            self.l3 = Linear_Robust(in_size=out_l2,
+                                    out_size=out_l3,
+                                    robustifier=robustifiers[2],
+                                    nfactor=nfactors[2],
+                                    init_W=None,
+                                    init_b=None,
+                                    init_delta=init_delta,
+                                    nobias=nobias) # robust Link.
+
+
+    def __call__(self, x):
+        # Layer 1: Rectified linear unit.
+        # Layer 2: Rectified linear unit.
+        # Layer 3: final outputs are un-normalized log probabilities.
+        return self.l3(
+            ch.functions.relu(
+                self.l2(ch.functions.relu(self.l1(x)))
+            )
+        )
+
+
 
 class Chain_FFWD_ReLU(ch.Chain):
     '''
@@ -261,3 +317,5 @@ class Chain_FFWD_ReLU(ch.Chain):
                     out = ch.functions.relu(out)
                 # no activation at last layer.
             return out
+
+        
