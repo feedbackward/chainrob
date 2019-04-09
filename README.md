@@ -4,11 +4,17 @@ Here in this small repository, we provide a working example of a straightforward
 
 #### Demo code
 
-The core demonstration used in this tutorial is a numerical experiment evaluating the utility of robust gradient descent methods applied to neural networks, under the possibility of arbitrary outliers. This demo is included in the Jupyter notebook file <a href="https://nbviewer.jupyter.org/github/feedbackward/chainrob/blob/master/demo.ipynb">demo.ipynb</a> (rendered using nbviewer).
+The core demonstration used in this tutorial is a numerical experiment evaluating the utility of robust gradient descent methods applied to neural networks, under the possibility of arbitrary outliers. This demo is included in the Jupyter notebook file:
+
+ - __Demo:__ <a href="https://nbviewer.jupyter.org/github/feedbackward/chainrob/blob/master/demo.ipynb">Integrating robust GD into neural net backprop</a> (`demo.ipynb`, rendered using nbviewer).
+
 
 #### Tutorial
 
-In addition to the software in this library, we provide a <a href="LINK">step-by-step tutorial</a> which attempts to bridge the gap between the code and the concepts.
+In addition to the software in this library, we provide a step-by-step tutorial which attempts to bridge the gap between the code and the concepts:
+
+ - __Tutorial__: <a href="https://feedbackward.com/content/chainrob.pdf">Robust gradient descent via back-propagation: A Chainer-based tutorial</a> (pdf)
+
 
 #### Related papers
 
