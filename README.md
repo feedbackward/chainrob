@@ -2,31 +2,22 @@
 
 Here in this small repository, we provide a working example of a straightforward way to implement "robust gradient descent" learning algorithms for almost any neural network architecture using <a href="https://chainer.org/">Chainer</a>.
 
-#### Demo code
-
 The core demonstration used in this tutorial is a numerical experiment evaluating the utility of robust gradient descent methods applied to neural networks, under the possibility of arbitrary outliers. This demo is included in the Jupyter notebook file:
 
  - __Demo:__ <a href="https://nbviewer.jupyter.org/github/feedbackward/chainrob/blob/master/demo.ipynb">Integrating robust GD into neural net backprop</a> (`demo.ipynb`, rendered using nbviewer).
-
-
-#### Tutorial
 
 In addition to the software in this library, we provide a step-by-step tutorial which attempts to bridge the gap between the code and the concepts:
 
  - __Tutorial__: <a href="https://feedbackward.com/content/chainrob.pdf">Robust gradient descent via back-propagation: A Chainer-based tutorial</a> (pdf)
 
-
-#### Related papers
-
-Finally, here are some links to our research papers that take an in-depth look 
-the robust gradient descent technique.
+The learning algorithm that we use as an example here is analyzed in detail in some of our research papers:
 
  - <a href="https://arxiv.org/abs/1706.00182">Efficient learning with robust gradient descent</a>. Matthew J. Holland and Kazushi Ikeda. Machine Learning (to appear), 2019.
 
  - <a href="https://arxiv.org/abs/1810.06207">Robust descent using smoothed multiplicative noise</a>. Matthew J. Holland. AISTATS 2019 (to appear).
 
 
-#### Setup
+### Setup
 
 The above demo was tested using Python 3.6 and Chainer 5.3.0. The basic software required can be assembled in a convenient manner using `conda`. Assuming the user has `conda` installed, run the following.
 
