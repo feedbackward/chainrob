@@ -14,7 +14,7 @@ The learning algorithm that we use as an example here is analyzed in detail in s
 
  - <a href="https://arxiv.org/abs/1706.00182">Efficient learning with robust gradient descent</a>. Matthew J. Holland and Kazushi Ikeda. Machine Learning (to appear), 2019.
 
- - <a href="https://arxiv.org/abs/1810.06207">Robust descent using smoothed multiplicative noise</a>. Matthew J. Holland. AISTATS 2019 (to appear).
+ - <a href="http://proceedings.mlr.press/v89/holland19a.html">Robust descent using smoothed multiplicative noise</a>. Matthew J. Holland. AISTATS 2019.
 
 
 ### Setup
