@@ -1,4 +1,4 @@
-# Robust gradient descent via back-propagation: A Chainer-based tutorial
+# chainrob: robust gradient descent via back-propagation, a Chainer-based tutorial
 
 Here in this small repository, we provide a working example of a straightforward way to implement "robust gradient descent" learning algorithms for almost any neural network architecture using <a href="https://chainer.org/">Chainer</a>.
 
